@@ -1,0 +1,16 @@
+version: '3.8'
+
+name: 'recording'
+
+services:
+  db:
+    image: postgres
+    container_name: recording-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: recording
+    ports:
+      - 5432:5432
+    volumes:
+      - .data:/var/lib/postgresql/data
