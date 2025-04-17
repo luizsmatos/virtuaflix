@@ -11,7 +11,7 @@ import request from 'supertest';
 describe('VideoController (e2e)', () => {
   let app: INestApplication<Server>;
   let prismaService: PrismaService;
-  const videoService = { uploadFile: jest.fn() };
+  const videoService = { uploadFile: vitest.fn() };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -24,12 +24,12 @@ describe('VideoController (e2e)', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    prismaService = moduleRef.get<PrismaService>(PrismaService);
+    prismaService = moduleRef.get(PrismaService);
   });
 
   beforeEach(() => {
-    jest
-      .useFakeTimers({ advanceTimers: true })
+    vitest
+      .useFakeTimers({ shouldAdvanceTime: true })
       .setSystemTime(new Date('2023-01-01T00:00:00.000Z'));
   });
 
