@@ -12,7 +12,8 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -23,6 +24,8 @@
     "noFallthroughCasesInSwitch": false,
     "strict": true,
     "esModuleInterop": true,
+    "types": ["vitest/globals"],
+    "strictPropertyInitialization": false
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*", "vitest.config.ts", "vitest.config.e2e.ts"],
 }
