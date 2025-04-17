@@ -1,15 +1,15 @@
 version: '3.8'
 
-name: 'recording'
+name: 'virtuaflix'
 
 services:
   db:
     image: postgres
-    container_name: recording-db
+    container_name: virtuaflix_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: recording
+      POSTGRES_DB: virtuaflix
     ports:
       - 5432:5432
     volumes:
