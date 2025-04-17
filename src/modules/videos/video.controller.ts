@@ -2,10 +2,11 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 
 import {
+  BadRequestException,
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
-  ParseFilePipeBuilder,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -47,21 +48,32 @@ export class VideoController {
       },
     ),
   )
-  uploadFile(
-    @UploadedFiles(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'video/mp4',
-        })
-        .addFileTypeValidator({
-          fileType: 'image/jpeg',
-        })
-        .build({
-          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        }),
-    )
+  async uploadFile(
+    @UploadedFiles()
     files: Record<string, Express.Multer.File[]>,
+    @Body() body: { title: string; description: string },
   ) {
-    return this.videoService.uploadFile(files);
+    const videoFile = files.video?.[0];
+    const thumbnailFile = files.thumbnail?.[0];
+
+    if (!videoFile || !thumbnailFile) {
+      throw new BadRequestException(
+        'Both video and thumbnail files are required.',
+      );
+    }
+
+    const { title, description } = body;
+
+    if (!title || !description) {
+      throw new BadRequestException('Title and description are required.');
+    }
+
+    return this.videoService.uploadFile({
+      title,
+      description,
+      videoUrl: videoFile.path,
+      thumbnailUrl: thumbnailFile.path,
+      sizeInKb: videoFile.size,
+    });
   }
 }
