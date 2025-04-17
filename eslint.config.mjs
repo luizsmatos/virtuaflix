@@ -16,7 +16,7 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.jest,
+        ...globals.vitest,
       },
       ecmaVersion: 5,
       sourceType: 'module',
@@ -27,19 +27,18 @@ export default tseslint.config(
     },
   },
   {
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
-    },
-  },
-  {
     plugins: {
       'simple-import-sort': eslintSimpleImportSort,
     },
+  },
+  {
     rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn',
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      "@typescript-eslint/require-await": "off"
     },
   },
 );
