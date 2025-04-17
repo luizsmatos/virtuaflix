@@ -4,22 +4,17 @@ import { Server } from 'node:http';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { VideoModule } from '@src/modules/videos/video.module';
-import { VideoService } from '@src/modules/videos/video.service';
 import { PrismaService } from '@src/prisma.service';
 import request from 'supertest';
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication<Server>;
   let prismaService: PrismaService;
-  const videoService = { uploadFile: vitest.fn() };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [VideoModule],
-    })
-      .overrideProvider(VideoService)
-      .useValue(videoService)
-      .compile();
+    }).compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
@@ -53,23 +48,26 @@ describe('VideoController (e2e)', () => {
         duration: 100,
       };
 
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/videos')
         .attach('video', './test/fixtures/sample.mp4')
         .attach('thumbnail', './test/fixtures/sample.jpg')
-        .field('title', 'test')
-        .field('description', 'test')
-        .expect(HttpStatus.CREATED)
-        .expect(({ body }) => {
-          expect(body).toMatchObject({
-            title: video.title,
-            description: video.description,
-            url: expect.stringContaining('mp4') as string,
-            thumbnail: expect.stringContaining('jpg') as string,
-            sizeInKb: video.sizeInKb,
-            duration: video.duration,
-          });
-        });
+        .field('title', video.title)
+        .field('description', video.description);
+
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          title: video.title,
+          description: video.description,
+          url: expect.stringContaining('mp4') as string,
+          thumbnailUrl: expect.stringContaining('jpg') as string,
+          sizeInKb: video.sizeInKb,
+          duration: video.duration,
+        }),
+      );
+
+      console.log(response.body);
     });
   });
 });
